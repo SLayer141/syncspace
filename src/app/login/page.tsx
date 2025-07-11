@@ -28,23 +28,17 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Login failed");
-        toast.error(data.error || "Login failed", { duration: 5000, position: "top-center" });
-      } else {
+      if (res?.ok) {
         toast.success("Login successful!", { duration: 5000, position: "top-center" });
-        router.push("/home"); // Redirect after successful login
+        router.push("/home");
+      } else {
+        setError(res?.error || "Login failed");
+        toast.error(res?.error || "Login failed", { duration: 5000, position: "top-center" });
       }
     } catch (err) {
       setError("An error occurred during login. Please try again.");
@@ -83,17 +77,17 @@ export default function Login() {
           Don't have an account? <Link href="/signup">Signup</Link>
         </p>
       </form>
-      {/* <div className="flex items-center my-4 w-full max-w-sm">
-        <hr className="flex-grow border-t" />
-        <span className="mx-2 text-gray-400">or</span>
-        <hr className="flex-grow border-t" />
-      </div>
-      <button
-        onClick={() => signIn('google')}
-        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg w-full max-w-sm"
-      >
-        Sign in with Google
-      </button> */}
+        <div className="flex items-center my-4 w-full max-w-sm">
+          <hr className="flex-grow border-t" />
+          <span className="mx-2 text-gray-400">or</span>
+          <hr className="flex-grow border-t" />
+        </div>
+        <button
+          onClick={() => signIn('google')}
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg w-full max-w-sm"
+        >
+          Sign in with Google
+        </button>
     </div>
   );
 }
